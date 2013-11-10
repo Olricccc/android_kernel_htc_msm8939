@@ -2223,8 +2223,8 @@ static inline void __update_tg_runnable_avg(struct sched_avg *sa,
 	struct task_group *tg = cfs_rq->tg;
 	long contrib;
 
-	
-	contrib = div_u64(sa->runnable_avg_sum << NICE_0_SHIFT,
+	/* The fraction of a cpu used by this cfs_rq */
+	contrib = div_u64((u64)sa->runnable_avg_sum << NICE_0_SHIFT,
 			  sa->runnable_avg_period + 1);
 	contrib -= cfs_rq->tg_runnable_contrib;
 
