@@ -242,8 +242,6 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
 
 #define CPUFREQ_PRECHANGE		(0)
 #define CPUFREQ_POSTCHANGE		(1)
-#define CPUFREQ_RESUMECHANGE		(8)
-#define CPUFREQ_SUSPENDCHANGE		(9)
 
 #define CPUFREQ_ADJUST			(0)
 #define CPUFREQ_INCOMPATIBLE		(1)
