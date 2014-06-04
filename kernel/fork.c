@@ -1033,12 +1033,12 @@ static void rt_mutex_init_task(struct task_struct *p)
 #endif
 }
 
-#ifdef CONFIG_MM_OWNER
+#ifdef CONFIG_MEMCG
 void mm_init_owner(struct mm_struct *mm, struct task_struct *p)
 {
 	mm->owner = p;
 }
-#endif 
+#endif /* CONFIG_MEMCG */
 
 static void posix_cpu_timers_init(struct task_struct *tsk)
 {
