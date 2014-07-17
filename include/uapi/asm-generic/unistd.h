@@ -626,9 +626,11 @@ __SYSCALL(__NR_kcmp, sys_kcmp)
 __SYSCALL(__NR_finit_module, sys_finit_module)
 #define __NR_seccomp 277
 __SYSCALL(__NR_seccomp, sys_seccomp)
+#define __NR_getrandom 278
+__SYSCALL(__NR_getrandom, sys_getrandom)
 
 #undef __NR_syscalls
-#define __NR_syscalls 278
+#define __NR_syscalls 279
 
 #ifdef __ARCH_WANT_SYSCALL_NO_AT
 #define __NR_open 1024
