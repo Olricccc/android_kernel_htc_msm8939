@@ -236,7 +236,7 @@ struct cfq_io_cq {
 	struct cfq_ttime	ttime;
 	int			ioprio;		
 #ifdef CONFIG_CFQ_GROUP_IOSCHED
-	uint64_t		blkcg_id;	
+	uint64_t		blkcg_serial_nr; /* the current blkcg serial */
 #endif
 };
 
@@ -3022,13 +3022,17 @@ static void check_blkcg_changed(struct cfq_io_cq *cic, struct bio *bio)
 {
 	struct cfq_data *cfqd = cic_to_cfqd(cic);
 	struct cfq_queue *sync_cfqq;
-	uint64_t id;
+	uint64_t serial_nr;
 
 	rcu_read_lock();
-	id = bio_blkcg(bio)->id;
+	serial_nr = bio_blkcg(bio)->css.serial_nr;
 	rcu_read_unlock();
 
-	if (unlikely(!cfqd) || likely(cic->blkcg_id == id))
+	/*
+	 * Check whether blkcg has changed.  The condition may trigger
+	 * spuriously on a newly created cic but there's no harm.
+	 */
+	if (unlikely(!cfqd) || likely(cic->blkcg_serial_nr == serial_nr))
 		return;
 
 	sync_cfqq = cic_to_cfqq(cic, 1);
@@ -3038,7 +3042,7 @@ static void check_blkcg_changed(struct cfq_io_cq *cic, struct bio *bio)
 		cfq_put_queue(sync_cfqq);
 	}
 
-	cic->blkcg_id = id;
+	cic->blkcg_serial_nr = serial_nr;
 }
 #else
 static inline void check_blkcg_changed(struct cfq_io_cq *cic, struct bio *bio) { }
