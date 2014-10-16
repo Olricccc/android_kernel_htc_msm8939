@@ -196,4 +196,6 @@ source "drivers/htc_ril/Kconfig"
 
 source "drivers/htc_mnemosyne/Kconfig"
 
+source "drivers/android/Kconfig"
+
 endmenu
