@@ -31,12 +31,12 @@
 #include <linux/delay.h>
 #include <linux/ratelimit.h>
 #include <linux/pm_runtime.h>
+#include <linux/blk-cgroup.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/block.h>
 
 #include "blk.h"
-#include "blk-cgroup.h"
 
 #ifdef CONFIG_MMC_MUST_PREVENT_WP_VIOLATION
 #include <linux/mmc/card.h>

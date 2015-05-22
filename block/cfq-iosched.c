@@ -14,8 +14,9 @@
 #include <linux/rbtree.h>
 #include <linux/ioprio.h>
 #include <linux/blktrace_api.h>
+#include <linux/blk-cgroup.h>
 #include "blk.h"
-#include "blk-cgroup.h"
+#include <linux/blk-cgroup.h>
 #include "../kernel/sched/sched.h"
 
 static const int cfq_quantum = 8;
