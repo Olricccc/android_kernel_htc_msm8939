@@ -74,6 +74,8 @@ struct cpufreq_policy {
 	struct completion	kobj_unregister;
 
 	struct rw_semaphore	rwsem;
+
+	unsigned int util;
 };
 
 #define CPUFREQ_SHARED_TYPE_NONE (0) 
