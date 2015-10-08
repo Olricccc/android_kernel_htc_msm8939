@@ -995,8 +995,8 @@ unsigned int __read_mostly sysctl_sched_upmigrate_pct = 80;
 unsigned int __read_mostly sched_downmigrate;
 unsigned int __read_mostly sysctl_sched_downmigrate_pct = 60;
 
-static int __read_mostly sched_upmigrate_min_nice = 15;
-int __read_mostly sysctl_sched_upmigrate_min_nice = 15;
+static int __read_mostly sched_upmigrate_min_nice = 9;
+int __read_mostly sysctl_sched_upmigrate_min_nice = 9;
 
 unsigned int __read_mostly sysctl_sched_prefer_idle;
 
