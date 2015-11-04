@@ -510,7 +510,13 @@ static void msm_spi_read_word_from_fifo(struct msm_spi *dd)
 	if (dd->read_buf) {
 		for (i = 0; (i < dd->bytes_per_word) &&
 			     dd->rx_bytes_remaining; i++) {
-			shift = 8 * (dd->bytes_per_word - i - 1);
+			/* The data format depends on bytes_per_word:
+			   4 bytes: 0x12345678
+			   3 bytes: 0x00123456
+			   2 bytes: 0x00001234
+			   1 byte : 0x00000012
+			*/
+			shift = BITS_PER_BYTE * i;
 			*dd->read_buf++ = (data_in & (0xFF << shift)) >> shift;
 			dd->rx_bytes_remaining--;
 		}
@@ -1006,7 +1012,7 @@ static void msm_spi_write_word_to_fifo(struct msm_spi *dd)
 			     dd->tx_bytes_remaining; i++) {
 			dd->tx_bytes_remaining--;
 			byte = *dd->write_buf++;
-			word |= (byte << (BITS_PER_BYTE * (3 - i)));
+			word |= (byte << (BITS_PER_BYTE * i));
 		}
 	} else
 		if (dd->tx_bytes_remaining > dd->bytes_per_word)
@@ -1255,8 +1261,10 @@ static void msm_spi_set_qup_io_modes(struct msm_spi *dd)
 	
 	if (dd->mode == SPI_BAM_MODE)
 		spi_iom |= SPI_IO_M_PACK_EN | SPI_IO_M_UNPACK_EN;
-	else
+	else {
 		spi_iom &= ~(SPI_IO_M_PACK_EN | SPI_IO_M_UNPACK_EN);
+		spi_iom |= SPI_IO_M_OUTPUT_BIT_SHIFT_EN;
+	}
 
 	writel_relaxed(spi_iom, dd->base + SPI_IO_MODES);
 }
