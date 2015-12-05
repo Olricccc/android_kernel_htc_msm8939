@@ -3204,8 +3204,8 @@ static int runtime_refresh_within(struct cfs_bandwidth *cfs_b, u64 min_expire)
 	struct hrtimer *refresh_timer = &cfs_b->period_timer;
 	u64 remaining;
 
-	
-	if (hrtimer_callback_running(refresh_timer))
+	/* if the call-back is running a quota refresh is already occurring */
+	if (hrtimer_callback_running_relaxed(refresh_timer))
 		return 1;
 
 	
