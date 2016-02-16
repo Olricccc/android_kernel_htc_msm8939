@@ -408,9 +408,15 @@ static int do_input_boost(void *data)
 		if (sched_boost_on_input && !sched_boost_active) {
 			ret = sched_set_boost(1);
 			if (ret)
+			{
+				sched_boost_on_input = false;
 				pr_err("cpu-boost: HMP boost enable failed\n");
+			}
+				
 			else
+			{
 				sched_boost_active = true;
+			}
 		}
 		mutex_unlock(&input_boost_lock);
 
