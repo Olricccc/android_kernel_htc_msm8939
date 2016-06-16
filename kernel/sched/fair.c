@@ -3548,6 +3548,12 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 		cfs_rq = cfs_rq_of(se);
 		enqueue_entity(cfs_rq, se, flags);
 
+		/*
+		 * end evaluation on encountering a throttled cfs_rq
+		 *
+		 * note: in the case of encountering a throttled cfs_rq we will
+		 * post the final h_nr_running increment below.
+		 */
 		if (cfs_rq_throttled(cfs_rq))
 			break;
 		cfs_rq->h_nr_running++;
@@ -6023,12 +6029,9 @@ static void task_fork_fair(struct task_struct *p)
 {
 	struct cfs_rq *cfs_rq;
 	struct sched_entity *se = &p->se, *curr;
-	int this_cpu = smp_processor_id();
 	struct rq *rq = this_rq();
-	unsigned long flags;
 
-	raw_spin_lock_irqsave(&rq->lock, flags);
-
+	raw_spin_lock(&rq->lock);
 	update_rq_clock(rq);
 
 	cfs_rq = task_cfs_rq(current);
@@ -6041,7 +6044,10 @@ static void task_fork_fair(struct task_struct *p)
 	update_curr(cfs_rq);
 
 	if (curr)
+	{
+	    update_curr(cfs_rq);
 		se->vruntime = curr->vruntime;
+	}
 	place_entity(cfs_rq, se, 1);
 
 	if (sysctl_sched_child_runs_first && curr && entity_before(curr, se)) {
@@ -6050,8 +6056,7 @@ static void task_fork_fair(struct task_struct *p)
 	}
 
 	se->vruntime -= cfs_rq->min_vruntime;
-
-	raw_spin_unlock_irqrestore(&rq->lock, flags);
+	raw_spin_unlock(&rq->lock);
 }
 
 static void
