@@ -34,30 +34,92 @@
 
 #include "sched.h"
 
+/*
+ * Targeted preemption latency for CPU-bound tasks:
+ * (default: 6ms * (1 + ilog(ncpus)), units: nanoseconds)
+ *
+ * NOTE: this latency value is not the same as the concept of
+ * 'timeslice length' - timeslices in CFS are of variable length
+ * and have no persistent notion like in traditional, time-slice
+ * based scheduling concepts.
+ *
+ * (to see the precise effective timeslice length of your workload,
+ *  run vmstat and monitor the context-switches (cs) field)
+ */
+#ifdef CONFIG_ZEN_INTERACTIVE
+unsigned int sysctl_sched_latency = 3000000ULL;
+unsigned int normalized_sysctl_sched_latency = 3000000ULL;
+#else
 unsigned int sysctl_sched_latency = 6000000ULL;
 unsigned int normalized_sysctl_sched_latency = 6000000ULL;
+#endif
 
 enum sched_tunable_scaling sysctl_sched_tunable_scaling
 	= SCHED_TUNABLESCALING_LOG;
 
+/*
+ * Minimal preemption granularity for CPU-bound tasks:
+ * (default: 0.75 msec * (1 + ilog(ncpus)), units: nanoseconds)
+ */
+#ifdef CONFIG_ZEN_INTERACTIVE
+unsigned int sysctl_sched_min_granularity = 300000ULL;
+unsigned int normalized_sysctl_sched_min_granularity = 300000ULL;
+#else
 unsigned int sysctl_sched_min_granularity = 750000ULL;
 unsigned int normalized_sysctl_sched_min_granularity = 750000ULL;
+#endif
 
+/*
+ * is kept at sysctl_sched_latency / sysctl_sched_min_granularity
+ */
+#ifdef CONFIG_ZEN_INTERACTIVE
+static unsigned int sched_nr_latency = 10;
+#else
 static unsigned int sched_nr_latency = 8;
+#endif
 
 unsigned int sysctl_sched_child_runs_first __read_mostly;
 
 unsigned int __read_mostly sysctl_sched_wake_to_idle;
 
+/*
+ * SCHED_OTHER wake-up granularity.
+ * (default: 1 msec * (1 + ilog(ncpus)), units: nanoseconds)
+ *
+ * This option delays the preemption effects of decoupled workloads
+ * and reduces their over-scheduling. Synchronous workloads will still
+ * have immediate wakeup/sleep latencies.
+ */
+#ifdef CONFIG_ZEN_INTERACTIVE
+unsigned int sysctl_sched_wakeup_granularity = 500000UL;
+unsigned int normalized_sysctl_sched_wakeup_granularity = 500000UL;
+
+const_debug unsigned int sysctl_sched_migration_cost = 250000UL;
+#else
 unsigned int sysctl_sched_wakeup_granularity = 1000000UL;
 unsigned int normalized_sysctl_sched_wakeup_granularity = 1000000UL;
 
 const_debug unsigned int sysctl_sched_migration_cost = 500000UL;
+#endif
 
 unsigned int __read_mostly sysctl_sched_shares_window = 10000000UL;
 
 #ifdef CONFIG_CFS_BANDWIDTH
+/*
+ * Amount of runtime to allocate from global (tg) to local (per-cfs_rq) pool
+ * each time a cfs_rq requests quota.
+ *
+ * Note: in the case that the slice exceeds the runtime remaining (either due
+ * to consumption or the quota being specified to be smaller than the slice)
+ * we will always only issue the remaining available time.
+ *
+ * default: 5 msec, units: microseconds
+  */
+#ifdef CONFIG_ZEN_INTERACTIVE
+unsigned int sysctl_sched_cfs_bandwidth_slice = 3000UL;
+#else
 unsigned int sysctl_sched_cfs_bandwidth_slice = 5000UL;
+#endif
 #endif
 
 static int get_update_sysctl_factor(void)
