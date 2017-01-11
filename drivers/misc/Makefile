@@ -72,4 +72,4 @@ obj-y				+= headset/
 obj-$(CONFIG_VIB_TRIGGERS)	+= vib-triggers.o
 obj-$(CONFIG_QPNP_VIBRATOR)	+= qpnp-vibrator.o
 obj-y				+= time_helper.o
-obj-$(CONFIG_UID_CPUTIME) 	+= uid_cputime.o
+obj-$(CONFIG_UID_SYS_STATS) += uid_sys_stats.o
