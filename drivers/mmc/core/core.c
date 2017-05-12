@@ -2831,7 +2831,6 @@ void mmc_detect_change(struct mmc_host *host, unsigned long delay)
 #endif
 	host->detect_change = 1;
 
-	wake_lock_timeout(&host->detect_wake_lock, HZ * MMC_WAKELOCK_TIMEOUT);
 	mmc_schedule_delayed_work(&host->detect, delay);
 }
 
