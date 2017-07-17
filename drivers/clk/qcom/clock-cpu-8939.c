@@ -53,6 +53,7 @@ static struct mux_div_clk a53ssmux_bc = {
 	},
 	.c = {
 		.dbg_name = "a53ssmux_bc",
+		.flags = CLKFLAG_NO_RATE_CACHE,
 		.ops = &clk_ops_mux_div_clk,
 		.vdd_class = &vdd_cpu_bc,
 		CLK_INIT(a53ssmux_bc.c),
@@ -73,6 +74,7 @@ static struct mux_div_clk a53ssmux_lc = {
 	},
 	.c = {
 		.dbg_name = "a53ssmux_lc",
+		.flags = CLKFLAG_NO_RATE_CACHE,
 		.ops = &clk_ops_mux_div_clk,
 		.vdd_class = &vdd_cpu_lc,
 		CLK_INIT(a53ssmux_lc.c),
@@ -93,6 +95,7 @@ static struct mux_div_clk a53ssmux_cci = {
 	},
 	.c = {
 		.dbg_name = "a53ssmux_cci",
+		.flags = CLKFLAG_NO_RATE_CACHE,
 		.ops = &clk_ops_mux_div_clk,
 		.vdd_class = &vdd_cpu_cci,
 		CLK_INIT(a53ssmux_cci.c),
