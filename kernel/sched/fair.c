@@ -982,7 +982,7 @@ unsigned int __read_mostly sched_spill_load;
 unsigned int __read_mostly sysctl_sched_spill_load_pct = 100;
 
 unsigned int __read_mostly sched_small_task;
-unsigned int __read_mostly sysctl_sched_small_task_pct = 10;
+unsigned int __read_mostly sysctl_sched_small_task_pct = 60;
 
 #ifdef CONFIG_SCHED_FREQ_INPUT
 unsigned int __read_mostly sysctl_sched_heavy_task_pct;
