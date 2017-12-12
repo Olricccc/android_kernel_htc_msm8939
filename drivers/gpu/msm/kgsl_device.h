@@ -1,4 +1,4 @@
-/* Copyright (c) 2002,2007-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2002,2007-2015,2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -354,6 +354,25 @@ struct kgsl_context {
 	unsigned long fault_time;
 };
 
+/**
+ * struct kgsl_process_private -  Private structure for a KGSL process (across
+ * all devices)
+ * @priv: Internal flags, use KGSL_PROCESS_* values
+ * @pid: ID for the task owner of the process
+ * @comm: task name of the process
+ * @mem_lock: Spinlock to protect the process memory lists
+ * @refcount: kref object for reference counting the process
+ * @mem_rb: RB tree node for the memory owned by this process
+ * @idr: Iterator for assigning IDs to memory allocations
+ * @pagetable: Pointer to the pagetable owned by this process
+ * @kobj: Pointer to a kobj for the sysfs directory for this process
+ * @debug_root: Pointer to the debugfs root for this process
+ * @stats: Memory allocation statistics for this process
+ * @syncsource_idr: sync sources created by this process
+ * @syncsource_lock: Spinlock to protect the syncsource idr
+ * @fd_count: Counter for the number of FDs for this process
+ * @ctxt_count: Count for the number of contexts for this process
+ */
 struct kgsl_process_private {
 	unsigned long priv;
 	pid_t pid;
@@ -374,6 +393,7 @@ struct kgsl_process_private {
 	struct idr syncsource_idr;
 	spinlock_t syncsource_lock;
 	int fd_count;
+	atomic_t ctxt_count;
 };
 
 enum kgsl_process_priv_flags {
