@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013-2015, 2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -149,7 +149,8 @@ struct wcd_cpe_core {
 	
 	struct mutex ssr_lock;
 
-	
+	struct mutex session_lock;
+
 	struct cal_type_data *cal_data[WCD_CPE_LSM_CAL_MAX];
 
 	
