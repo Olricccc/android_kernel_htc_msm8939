@@ -116,10 +116,6 @@ module_param_named(
 	print_parsed_dt, print_parsed_dt, bool, S_IRUGO | S_IWUSR | S_IWGRP
 );
 
-static bool sleep_disabled;
-module_param_named(sleep_disabled,
-	sleep_disabled, bool, S_IRUGO | S_IWUSR | S_IWGRP);
-
 unsigned int lpm_big_latency_extend=0;
 module_param_named(lpm_big_latency_extend,
 	lpm_big_latency_extend, uint, S_IRUGO | S_IWUSR | S_IWGRP);
@@ -287,9 +283,6 @@ static int cpu_power_select(struct cpuidle_device *dev,
 
 	if (get_time_in_sec(arch_counter_get_cntpct()) < 180)
 		 return 0;
-
-	if (sleep_disabled)
-		return 0;
 
 	if (!dev->cpu)
 		next_event_us = (uint32_t)(ktime_to_us(get_next_event_time()));
