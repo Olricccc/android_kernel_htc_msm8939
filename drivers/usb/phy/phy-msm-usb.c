@@ -1508,6 +1508,8 @@ phcd_retry:
 	
 	if (motg->async_irq)
 		enable_irq(motg->async_irq);
+	if (motg->phy_irq)
+		enable_irq(motg->phy_irq);
 
 	
 	if (device_bus_suspend || host_bus_suspend || !motg->async_irq) {
