@@ -887,11 +887,6 @@ static void htc_pm_monitor_work_func(struct work_struct *work)
 	htc_idle_stat_show();
 	htc_idle_stat_clear();
 
-	/* Show timer stats */
-	htc_timer_stats_onoff('0');
-	htc_timer_stats_show(300); /*Show timer events which greater than 300 every 10 sec*/
-	htc_timer_stats_onoff('1');
-
 	/* Show wakeup source */
 	htc_print_active_wakeup_sources();
 
