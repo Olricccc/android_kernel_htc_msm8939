@@ -657,6 +657,13 @@ static int voice_svc_open(struct inode *inode, struct file *file)
 		goto done;
 	}
 
+	mutex_lock(&session_lock);
+	if (is_released == 0) {
+		pr_err("%s: Access denied to device\n", __func__);
+		ret = -EBUSY;
+		goto done;
+	}
+
 	prtd = kmalloc(sizeof(struct voice_svc_prvt), GFP_KERNEL);
 
 	if (prtd == NULL) {
