@@ -1065,8 +1065,11 @@ struct task_struct {
 #endif
 	struct seccomp seccomp;
 
-   	u32 parent_exec_id;
-   	u32 self_exec_id;
+/* Thread group tracking */
+	u64 parent_exec_id;
+	u64 self_exec_id;
+/* Protection of (de-)allocation: mm, files, fs, tty, keyrings, mems_allowed,
+ * mempolicy */
 	spinlock_t alloc_lock;
 
 	

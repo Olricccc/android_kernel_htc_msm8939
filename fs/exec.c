@@ -1009,9 +1009,9 @@ void setup_new_exec(struct linux_binprm * bprm)
 			set_dumpable(current->mm, suid_dumpable);
 	}
 
-
-	current->self_exec_id++;
-			
+	/* An exec changes our domain. We are no longer part of the thread
+	   group */
+	WRITE_ONCE(current->self_exec_id, current->self_exec_id + 1);
 	flush_signal_handlers(current, 0);
 }
 EXPORT_SYMBOL(setup_new_exec);
