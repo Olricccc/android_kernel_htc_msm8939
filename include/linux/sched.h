@@ -1871,7 +1871,9 @@ static inline void mmdrop(struct mm_struct * mm)
 		__mmdrop(mm);
 }
 
-extern int mmput(struct mm_struct *);
+/* mmput gets rid of the mappings and all user-space */
+extern void mmput(struct mm_struct *);
+/* Grab a reference to a task's mm, if it is not already going away */
 extern struct mm_struct *get_task_mm(struct task_struct *task);
 extern struct mm_struct *mm_access(struct task_struct *task, unsigned int mode);
 extern void mm_release(struct task_struct *, struct mm_struct *);
