@@ -1440,7 +1440,6 @@ static inline void sched_set_io_is_busy(int val) {};
 #define PF_WAKE_UP_IDLE 0x80000000	
 
 #define PF_SU		0x00000002      /* task is su */
-#define PF_SUSPEND_TASK 0x80000000      /* this thread called freeze_processes and should not be frozen */
 
 #define clear_stopped_child_used_math(child) do { (child)->flags &= ~PF_USED_MATH; } while (0)
 #define set_stopped_child_used_math(child) do { (child)->flags |= PF_USED_MATH; } while (0)
