@@ -796,9 +796,12 @@ static int cpufreq_interactive_notifier(
 	int cpu;
 	unsigned long flags;
 
+	if(unlikely(atomic_read(&notifier_usage_count) == 0))
+		return 0;
+
 	if (val == CPUFREQ_PRECHANGE) {
-		ppol = per_cpu(polinfo, freq->cpu);
-		if (!ppol)
+		pcpu = &per_cpu(cpuinfo, freq->cpu);
+		if (!down_read_trylock(&pcpu->enable_sem))
 			return 0;
 		if (!pcpu->governor_enabled) {
 			up_read(&pcpu->enable_sem);
