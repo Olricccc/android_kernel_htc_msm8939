@@ -799,7 +799,7 @@ static int cpufreq_interactive_notifier(
 	if(unlikely(atomic_read(&notifier_usage_count) == 0))
 		return 0;
 
-	if (val == CPUFREQ_PRECHANGE) {
+	if (val == CPUFREQ_POSTCHANGE) {
 		pcpu = &per_cpu(cpuinfo, freq->cpu);
 		if (!down_read_trylock(&pcpu->enable_sem))
 			return 0;
