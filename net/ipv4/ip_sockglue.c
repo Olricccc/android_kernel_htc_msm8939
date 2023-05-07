@@ -1066,8 +1066,11 @@ int ip_setsockopt(struct sock *sk, int level,
 	if (err == -ENOPROTOOPT && optname != IP_HDRINCL &&
 			optname != IP_IPSEC_POLICY &&
 			optname != IP_XFRM_POLICY &&
-			!ip_mroute_opt(optname))
+			!ip_mroute_opt(optname)) {
+		lock_sock(sk);
 		err = nf_setsockopt(sk, PF_INET, optname, optval, optlen);
+		release_sock(sk);
+	}
 #endif
 	return err;
 }
@@ -1092,9 +1095,12 @@ int compat_ip_setsockopt(struct sock *sk, int level, int optname,
 	if (err == -ENOPROTOOPT && optname != IP_HDRINCL &&
 			optname != IP_IPSEC_POLICY &&
 			optname != IP_XFRM_POLICY &&
-			!ip_mroute_opt(optname))
-		err = compat_nf_setsockopt(sk, PF_INET, optname, optval,
-					   optlen);
+			!ip_mroute_opt(optname)) {
+		lock_sock(sk);
+		err = compat_nf_setsockopt(sk, PF_INET, optname,
+					   optval, optlen);
+		release_sock(sk);
+	}
 #endif
 	return err;
 }
