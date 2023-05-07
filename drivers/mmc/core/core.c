@@ -861,10 +861,12 @@ void mmc_start_bkops(struct mmc_card *card, bool from_exception)
 	}
 
 	/* Do not do bkops if user does not plugs AC chager in EPS mode */
+#ifdef CONFIG_HTC_POWER_DEBUG
 	if ((powersave_enabled == PP_EXTREMELY_POWERSAVE) && !ac_status)  {
 		pr_info("%s: skip bkops due to extreme powersave mode\n", __func__);
 		return;
 	}
+#endif
 
 	mmc_rpm_hold(card->host, &card->dev);
 	/* In case of delayed bkops we might be in race with suspend. */
