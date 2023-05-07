@@ -1751,7 +1751,7 @@ __be16 skb_network_protocol(struct sk_buff *skb)
 		if (unlikely(!pskb_may_pull(skb, sizeof(struct ethhdr))))
 			return 0;
 
-		eth = (struct ethhdr *)skb->data;
+		eth = (struct ethhdr *)skb_mac_header(skb);
 		type = eth->h_proto;
 	}
 
