@@ -327,11 +327,6 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 			ext_csd[EXT_CSD_SEC_CNT + 2] << 16 |
 			ext_csd[EXT_CSD_SEC_CNT + 3] << 24;
 
-/* Disabling those values should be fine because M8s only released in Europe
-   and China. None of these cid values related to these regions.
-   mid value also for Desire 826. Our mid is 0PKV10000 so we should be fine.
-*/
-#ifdef CONFIG_HTC_DEBUG
 		if (board_mid() && !strncmp(board_mid(), "0PHC10000", 9) &&
 		    (card->ext_csd.sectors > 33554432)) {
 			if (board_cid() &&
@@ -342,7 +337,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 			    !strncmp(board_cid(), "HTC__059", 8)))
 				card->ext_csd.sectors = 30785535;
 		}
-#endif
+
 		
 		if (card->ext_csd.sectors > (2u * 1024 * 1024 * 1024) / 512)
 			mmc_card_set_blockaddr(card);
