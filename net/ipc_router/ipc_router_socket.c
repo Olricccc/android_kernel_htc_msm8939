@@ -282,21 +282,19 @@ static int msm_ipc_router_create(struct net *net,
 		return -ENOMEM;
 	}
 
-	sock->ops = &msm_ipc_proto_ops;
-	sock_init_data(sock, sk);
-	sk->sk_data_ready = NULL;
-	sk->sk_rcvtimeo = DEFAULT_RCV_TIMEO;
-	sk->sk_sndtimeo = DEFAULT_SND_TIMEO;
-
 	port_ptr = msm_ipc_router_create_raw_port(sk, NULL, NULL);
 	if (!port_ptr) {
 		IPC_RTR_ERR("%s: port_ptr alloc failed\n", __func__);
-		sock_put(sk);
-		sock->sk = NULL;
+		sk_free(sk);
 		return -ENOMEM;
 	}
 
 	port_ptr->check_send_permissions = msm_ipc_check_send_permissions;
+	sock->ops = &msm_ipc_proto_ops;
+	sock_init_data(sock, sk);
+	sk->sk_rcvtimeo = DEFAULT_RCV_TIMEO;
+	sk->sk_sndtimeo = DEFAULT_SND_TIMEO;
+
 	msm_ipc_sk(sk)->port = port_ptr;
 	msm_ipc_sk(sk)->default_node_vote_info = NULL;
 
