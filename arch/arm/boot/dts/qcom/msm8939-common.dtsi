@@ -71,12 +71,12 @@
 			label = "venus_mem";
 		};
 
-		ramoops_mem: ramoops_region@0 {
-                       linux,reserve-contiguous-region;
-                       linux,reserve-region;
-                       linux,remove-completely;
+		pstore_reserve_mem: pstore_reserve_region@0 {
+			           linux,reserve-contiguous-region;
+			           linux,reserve-region;
+			           linux,remove-completely;
                        reg = <0 0x8c800000 0 0x00100000>; /* 1 MB */
-                       label = "ramoops_mem";
+                       label = "pstore_reserve_mem";
                };
 
 		secure_mem: secure_region@0 {
@@ -110,15 +110,7 @@
 			htc_mnemosyne_mem: htc_mnemosyne_mem@0 {
 				reg = <0x0 0x8CBE0000 0x0 0x2000>; /* 8 KB */
 			};
-		};
-
-	       htc_ramoops@0 {
-                       compatible = "htc,ramoops";
-                       linux,contiguous-region = <&ramoops_mem>;
-                       record-size = <0x00000000>;
-                       console-size = <0x00100000>; /* 1 MB */
-                       ftrace-size = <0x00000000>;
-               };
+		};	
 
 		htc_mnemosyne@0 {
 			compatible = "htc,mnemosyne";
@@ -147,6 +139,17 @@
 	#size-cells = <1>;
 	ranges = <0 0 0 0xffffffff>;
 	compatible = "simple-bus";
+
+ramoops {
+		compatible = "ramoops";
+		status = "ok";
+
+		android,ramoops-buffer-start = <0x8c800000>;
+		android,ramoops-buffer-size = <0x100000>;
+		android,ramoops-console-size = <0x80000>;
+		android,ramoops-record-size = <0x20000>;
+		android,ramoops-dump-oops = <0x1>;
+	};
 
 	intc: interrupt-controller@b000000 {
 		compatible = "qcom,msm-qgic2";
