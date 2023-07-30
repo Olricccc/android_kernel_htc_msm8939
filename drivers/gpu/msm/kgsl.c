@@ -551,7 +551,9 @@ out:
 		atomic_dec(&proc_priv->ctxt_count);
 		write_lock(&device->context_lock);
 		idr_remove(&dev_priv->device->context_idr, id);
+#ifdef CONFIG_MSM_KGSL_HTC
 		kgsl_dump_contextpid_locked(&dev_priv->device->context_idr);
+#endif
 		write_unlock(&device->context_lock);
 	}
 
@@ -4218,9 +4220,9 @@ int kgsl_device_platform_probe(struct kgsl_device *device)
 	
 	kgsl_pwrctrl_init_sysfs(device);
 
-	
+#ifdef CONFIG_MSM_KGSL_HTC
 	kgsl_device_htc_init(device);
-
+#endif
 	dev_info(device->dev, "Initialized %s: mmu=%s\n", device->name,
 		kgsl_mmu_enabled() ? "on" : "off");
 
@@ -4363,9 +4365,9 @@ static int __init kgsl_core_init(void)
 	}
 
 	kgsl_memfree_init();
-
+#ifdef CONFIG_MSM_KGSL_HTC
 	kgsl_driver_htc_init(&kgsl_driver.priv);
-
+#endif
 	return 0;
 
 err:

@@ -1308,9 +1308,9 @@ static int dispatcher_do_fault(struct kgsl_device *device)
 	}
 
 	atomic_add(halt, &adreno_dev->halt);
-
+#ifdef CONFIG_MSM_KGSL_HTC
 	adreno_fault_panic(device, fault_pid, keepfault);
-
+#endif
 	return 1;
 }
 

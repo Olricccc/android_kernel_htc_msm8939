@@ -138,9 +138,6 @@ struct ion_client *msm_ion_client_create(const char *name)
 
 	client = ion_client_create(idev, name);
 
-	if (client)
-		ion_client_set_debug_name(client, name);
-
 	return client;
 }
 EXPORT_SYMBOL(msm_ion_client_create);
@@ -857,8 +854,6 @@ long msm_ion_custom_ioctl(struct ion_client *client,
 
 		debug_name[name_len] = '\0';
 
-		return ion_client_set_debug_name(
-				client, debug_name);
 	}
 	default:
 		return -ENOTTY;

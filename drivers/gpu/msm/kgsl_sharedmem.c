@@ -279,8 +279,10 @@ static ssize_t kgsl_alloc_show(struct device *dev,
 					struct device_attribute *attr,
 					char *buf)
 {
+#ifdef CONFIG_MSM_KGSL_HTC
 	return snprintf(buf, PAGE_SIZE, "%d\n",
 			kgsl_get_alloc_size(true));
+#endif
 }
 static DEVICE_ATTR(vmalloc, 0444, kgsl_drv_memstat_show, NULL);
 static DEVICE_ATTR(vmalloc_max, 0444, kgsl_drv_memstat_show, NULL);

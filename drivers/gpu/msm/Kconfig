@@ -13,6 +13,11 @@ config MSM_KGSL
 	  3D graphics driver. Required to use hardware accelerated
 	  OpenGL ES 2.0 and 1.1.
 
+config MSM_KGSL_HTC
+	bool "Enable HTC specific changes"
+	default n
+	depends on MSM_KGSL
+
 config MSM_KGSL_CFF_DUMP
 	bool "Enable KGSL Common File Format (CFF) Dump Feature [Use with caution]"
 	default n
