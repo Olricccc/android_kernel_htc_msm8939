@@ -1016,30 +1016,6 @@ err_put_task_struct:
 }
 EXPORT_SYMBOL(ion_client_create);
 
-int ion_client_set_debug_name(struct ion_client *client, const char *debug_name)
-{
-	int ret = 0;
-	if (!debug_name) {
-		pr_err("%s: debug name cannot be null\n", __func__);
-		return -EINVAL;
-	}
-
-	mutex_lock(&client->lock);
-	if (client->debug_name) {
-		kfree(client->debug_name);
-	}
-
-	client->debug_name = kstrndup(debug_name, 64, GFP_KERNEL);
-	if (!client->debug_name) {
-		pr_err("%s: nomem to kstrdup '%s'\n", __func__, debug_name);
-		ret = -ENOMEM;
-	}
-
-	mutex_unlock(&client->lock);
-	return ret;
-}
-EXPORT_SYMBOL(ion_client_set_debug_name);
-
 void ion_client_destroy(struct ion_client *client)
 {
 	struct ion_device *dev = client->dev;
