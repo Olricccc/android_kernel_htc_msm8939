@@ -17,6 +17,7 @@
 #include <linux/clk.h>
 #include <linux/mutex.h>
 #include <linux/platform_device.h>
+#include <linux/pm_qos.h>
 #include <linux/spinlock.h>
 #include <linux/msm_iommu_domains.h>
 #include <soc/qcom/ocmem.h>
@@ -205,6 +206,7 @@ struct venus_hfi_device {
 	enum venus_hfi_state state;
 	struct hfi_packetization_ops *pkt_ops;
 	enum hfi_packetization_type packetization_type;
+	struct pm_qos_request qos;
     /* HTC_START: ION debug mechanism enhancement
      * Add struct msm_vidc_inst here is to get the instance, then
      * we can use the pointer to recognize the ION buffer which

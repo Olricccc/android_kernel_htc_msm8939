@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013-2014, 2017 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -531,6 +531,11 @@ void rmnet_config_netlink_msg_handler(struct sk_buff *skb)
 	nlmsg_header = (struct nlmsghdr *) skb->data;
 	rmnet_header = (struct rmnet_nl_msg_s *) nlmsg_data(nlmsg_header);
 
+	if (!nlmsg_header->nlmsg_pid ||
+	    (nlmsg_header->nlmsg_len < sizeof(struct nlmsghdr) +
+				       sizeof(struct rmnet_nl_msg_s)))
+		return;
+
 	LOGL("Netlink message pid=%d, seq=%d, length=%d, rmnet_type=%d",
 		nlmsg_header->nlmsg_pid,
 		nlmsg_header->nlmsg_seq,
@@ -620,6 +625,13 @@ void rmnet_config_netlink_msg_handler(struct sk_buff *skb)
 	case RMNET_NETLINK_NEW_VND_WITH_PREFIX:
 		resp_rmnet->crd = RMNET_NETLINK_MSG_RETURNCODE;
 		resp_rmnet->return_code = rmnet_create_vnd_prefix(
+						rmnet_header->vnd.id,
+						rmnet_header->vnd.vnd_name);
+		break;
+
+	case RMNET_NETLINK_NEW_VND_WITH_NAME:
+		resp_rmnet->crd = RMNET_NETLINK_MSG_RETURNCODE;
+		resp_rmnet->return_code = rmnet_create_vnd_name(
 						rmnet_header->vnd.id,
 						rmnet_header->vnd.vnd_name);
 		break;
@@ -1066,11 +1078,11 @@ int rmnet_create_vnd(int id)
 	struct net_device *dev;
 	ASSERT_RTNL();
 	LOGL("(%d);", id);
-	return rmnet_vnd_create_dev(id, &dev, NULL);
+	return rmnet_vnd_create_dev(id, &dev, NULL, 0);
 }
 
 /**
- * rmnet_create_vnd() - Create virtual network device node
+ * rmnet_create_vnd_prefix() - Create virtual network device node
  * @id:       RmNet virtual device node id
  * @prefix:   String prefix for device name
  *
@@ -1082,7 +1094,24 @@ int rmnet_create_vnd_prefix(int id, const char *prefix)
 	struct net_device *dev;
 	ASSERT_RTNL();
 	LOGL("(%d, \"%s\");", id, prefix);
-	return rmnet_vnd_create_dev(id, &dev, prefix);
+	return rmnet_vnd_create_dev(id, &dev, prefix, 0);
+}
+
+/**
+ * rmnet_create_vnd_name() - Create virtual network device node
+ * @id:       RmNet virtual device node id
+ * @prefix:   String prefix for device name
+ *
+ * Return:
+ *      - result of rmnet_vnd_create_dev()
+ */
+int rmnet_create_vnd_name(int id, const char *name)
+{
+	struct net_device *dev;
+
+	ASSERT_RTNL();
+	LOGL("(%d, \"%s\");", id, name);
+	return rmnet_vnd_create_dev(id, &dev, name, 1);
 }
 
 /**

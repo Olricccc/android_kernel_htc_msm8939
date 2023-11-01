@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -34,7 +34,6 @@ enum {
 	ADM_AUDVOL_CAL,
 	ADM_RTAC_INFO_CAL,
 	ADM_RTAC_APR_CAL,
-	ADM_DTS_EAGLE,
 	ADM_SRS_TRUMEDIA,
 	ADM_MAX_CAL_TYPES
 };
@@ -63,6 +62,13 @@ struct route_payload {
 	unsigned int session_id;
 };
 
+struct route_ec_ref_cfg {
+	u16 channel;
+	u16 bit_width;
+	u32 sample_rate;
+	int port_id;
+};
+
 int srs_trumedia_open(int port_id, int copp_idx, __s32 srs_tech_id,
 		      void *srs_params);
 
@@ -83,7 +89,7 @@ int adm_dolby_dap_send_params(int port_id, int copp_idx, char *params,
 
 int adm_open(int port, int path, int rate, int mode, int topology,
 			   int perf_mode, uint16_t bits_per_sample,
-			   int app_type, int acdbdev_id);
+			   int app_type, int acdbdev_id, int session_type);
 
 int adm_map_rtac_block(struct rtac_cal_block_data *cal_block);
 
@@ -92,7 +98,7 @@ int adm_unmap_rtac_block(uint32_t *mem_map_handle);
 int adm_close(int port, int topology, int perf_mode);
 
 int adm_matrix_map(int path, struct route_payload payload_map,
-		   int perf_mode);
+		   int perf_mode, uint32_t passthr_mode);
 
 int adm_connect_afe_port(int mode, int session_id, int port_id);
 
@@ -153,4 +159,5 @@ int adm_get_source_tracking(int port_id, int copp_idx,
 int q6adm_enable_effect(int port_id, uint32_t module_id, uint32_t param_id,
 		uint32_t payload_size, void *payload);
 
-#endif 
+void adm_lec_ref_cfg(struct route_ec_ref_cfg ref_cfg);
+#endif /* __Q6_ADM_V2_H__ */

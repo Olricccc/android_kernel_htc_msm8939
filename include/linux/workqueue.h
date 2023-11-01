@@ -55,7 +55,8 @@ enum {
 	
 	WORK_OFFQ_FLAG_BASE	= WORK_STRUCT_COLOR_SHIFT,
 
-	WORK_OFFQ_CANCELING	= (1 << WORK_OFFQ_FLAG_BASE),
+	__WORK_OFFQ_CANCELING	= WORK_OFFQ_FLAG_BASE,
+	WORK_OFFQ_CANCELING	= (1 << __WORK_OFFQ_CANCELING),
 
 	WORK_OFFQ_FLAG_BITS	= 1,
 	WORK_OFFQ_POOL_SHIFT	= WORK_OFFQ_FLAG_BASE + WORK_OFFQ_FLAG_BITS,
@@ -242,8 +243,9 @@ enum {
 	WQ_CPU_INTENSIVE	= 1 << 5, 
 	WQ_SYSFS		= 1 << 6, 
 
-	__WQ_DRAINING		= 1 << 16, 
-	__WQ_ORDERED		= 1 << 17, 
+	__WQ_DRAINING		= 1 << 16, /* internal: workqueue is draining */
+	__WQ_ORDERED		= 1 << 17, /* internal: workqueue is ordered */
+	__WQ_ORDERED_EXPLICIT	= 1 << 18, /* internal: alloc_ordered_workqueue() */
 
 	WQ_MAX_ACTIVE		= 512,	  
 	WQ_MAX_UNBOUND_PER_CPU	= 4,	  
@@ -296,14 +298,15 @@ __alloc_workqueue_key(const char *fmt, unsigned int flags, int max_active,
 #endif
 
 #define alloc_ordered_workqueue(fmt, flags, args...)			\
-	alloc_workqueue(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, ##args)
+	alloc_workqueue(fmt, WQ_UNBOUND | __WQ_ORDERED |		\
+			__WQ_ORDERED_EXPLICIT | (flags), 1, ##args)
 
 #define create_workqueue(name)						\
 	alloc_workqueue((name), WQ_MEM_RECLAIM, 1)
 #define create_freezable_workqueue(name)				\
 	alloc_workqueue((name), WQ_FREEZABLE | WQ_UNBOUND | WQ_MEM_RECLAIM, 1)
 #define create_singlethread_workqueue(name)				\
-	alloc_workqueue((name), WQ_UNBOUND | WQ_MEM_RECLAIM, 1)
+	alloc_ordered_workqueue("%s", WQ_MEM_RECLAIM, name)
 
 extern void destroy_workqueue(struct workqueue_struct *wq);
 

@@ -48,6 +48,7 @@ struct perf_guest_info_callbacks {
 #include <linux/atomic.h>
 #include <linux/sysfs.h>
 #include <linux/perf_regs.h>
+#include <linux/workqueue.h>
 #include <asm/local.h>
 
 struct perf_callchain_entry {
@@ -222,6 +223,12 @@ struct perf_event {
 	int				nr_siblings;
 	int				group_flags;
 	struct perf_event		*group_leader;
+
+	/*
+	 * Protect the pmu, attributes and context of a group leader.
+	 * Note: does not protect the pointer to the group_leader.
+	 */
+	struct mutex			group_leader_mutex;
 	struct pmu			*pmu;
 
 	enum perf_event_active_state	state;
@@ -305,14 +312,17 @@ struct perf_event {
 #endif 
 };
 
-enum perf_event_context_type {
-	task_context,
-	cpu_context,
-};
-
+/**
+ * struct perf_event_context - event context structure
+ *
+ * Used as a container for task events and CPU events as well:
+ */
 struct perf_event_context {
 	struct pmu			*pmu;
-	enum perf_event_context_type	type;
+	/*
+	 * Protect the states of the events in the list,
+	 * nr_active, and the list:
+	 */
 	raw_spinlock_t			lock;
 	struct mutex			mutex;
 
@@ -338,6 +348,9 @@ struct perf_event_context {
 	int				nr_cgroups;	 
 	int				nr_branch_stack; 
 	struct rcu_head			rcu_head;
+
+	struct delayed_work		orphans_remove;
+	bool				orphans_remove_sched;
 };
 
 #define PERF_NR_CONTEXTS	4

@@ -513,6 +513,15 @@ static int soc_ac97_dev_register(struct snd_soc_codec *codec)
 }
 #endif
 
+static void codec2codec_close_delayed_work(struct work_struct *work)
+{
+	/* Currently nothing to do for c2c links
+	 * Since c2c links are internal nodes in the DAPM graph and
+	 * don't interface with the outside world or application layer
+	 * we don't have to do any special handling on close.
+	 */
+}
+
 #ifdef CONFIG_PM_SLEEP
 int snd_soc_suspend(struct device *dev)
 {
@@ -1105,7 +1114,8 @@ static int soc_probe_platform(struct snd_soc_card *card,
 
 	
 	list_for_each_entry(dai, &dai_list, list) {
-		if (dai->dev != platform->dev)
+		if (dai->dev != platform->dev ||
+		    dai->playback_widget || dai->capture_widget)
 			continue;
 
 		snd_soc_dapm_new_dai_widgets(&platform->dapm, dai);
@@ -1374,7 +1384,7 @@ static int soc_probe_link_dais(struct snd_soc_card *card, int num, int order)
 				return ret;
 			}
 		} else {
-			
+			/* link the DAI widgets */
 			play_w = codec_dai->playback_widget;
 			capture_w = cpu_dai->capture_widget;
 			if (play_w && capture_w) {
@@ -2002,9 +2012,13 @@ unsigned int snd_soc_read(struct snd_soc_codec *codec, unsigned int reg)
 {
 	unsigned int ret;
 
-	ret = codec->read(codec, reg);
-	dev_dbg(codec->dev, "read %x => %x\n", reg, ret);
-	trace_snd_soc_reg_read(codec, reg, ret);
+	if (codec->read) {
+		ret = codec->read(codec, reg);
+		dev_dbg(codec->dev, "read %x => %x\n", reg, ret);
+		trace_snd_soc_reg_read(codec, reg, ret);
+	}
+	else
+		ret = -EIO;
 
 	return ret;
 }
@@ -2013,9 +2027,13 @@ EXPORT_SYMBOL_GPL(snd_soc_read);
 unsigned int snd_soc_write(struct snd_soc_codec *codec,
 			   unsigned int reg, unsigned int val)
 {
-	dev_dbg(codec->dev, "write %x = %x\n", reg, val);
-	trace_snd_soc_reg_write(codec, reg, val);
-	return codec->write(codec, reg, val);
+	if (codec->write) {
+		dev_dbg(codec->dev, "write %x = %x\n", reg, val);
+		trace_snd_soc_reg_write(codec, reg, val);
+		return codec->write(codec, reg, val);
+	}
+	else
+		return -EIO;
 }
 EXPORT_SYMBOL_GPL(snd_soc_write);
 
@@ -2727,11 +2745,11 @@ int snd_soc_bytes_get(struct snd_kcontrol *kcontrol,
 			break;
 		case 2:
 			((u16 *)(&ucontrol->value.bytes.data))[0]
-				&= ~params->mask;
+				&= cpu_to_be16(~params->mask);
 			break;
 		case 4:
 			((u32 *)(&ucontrol->value.bytes.data))[0]
-				&= ~params->mask;
+				&= cpu_to_be32(~params->mask);
 			break;
 		default:
 			return -EINVAL;

@@ -148,7 +148,8 @@ static struct reg_default wsa881x_defaults[] = {
 	{WSA881X_SPKR_STATUS3, 0x00},
 };
 
-static struct reg_default wsa881x_rev_1_x[] = {
+/* Default register reset values for WSA881x rev 1.0 or 1.1 */
+static struct reg_sequence wsa881x_rev_1_x[] = {
 	{WSA881X_INTR_MASK, 0x1F},
 	{WSA881X_OTP_REG_28, 0xFF},
 	{WSA881X_OTP_REG_29, 0xFF},
@@ -171,7 +172,8 @@ static struct reg_default wsa881x_rev_1_x[] = {
 	{WSA881X_BONGO_RESRV_REG2, 0x00},
 };
 
-static struct reg_default wsa881x_rev_2_0[] = {
+/* Default register reset values for WSA881x rev 2.0 */
+static struct reg_sequence wsa881x_rev_2_0[] = {
 	{WSA881X_RESET_CTL, 0x00},
 	{WSA881X_TADC_VALUE_CTL, 0x01},
 	{WSA881X_INTR_MASK, 0x1B},

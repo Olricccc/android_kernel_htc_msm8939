@@ -405,8 +405,11 @@
 #define __NR_finit_module		(__NR_SYSCALL_BASE+379)
 #define __NR_sched_setattr		(__NR_SYSCALL_BASE+380)
 #define __NR_sched_getattr		(__NR_SYSCALL_BASE+381)
-#define __NR_seccomp                    (__NR_SYSCALL_BASE+383)
-
+/* Backporting seccomp, skip a few ...
+ #define __NR_renameat2			(__NR_SYSCALL_BASE+382)
+ */
+#define __NR_seccomp			(__NR_SYSCALL_BASE+383)
+#define __NR_getrandom			(__NR_SYSCALL_BASE+384)
 
 #define __ARM_NR_BASE			(__NR_SYSCALL_BASE+0x0f0000)
 #define __ARM_NR_breakpoint		(__ARM_NR_BASE+1)
